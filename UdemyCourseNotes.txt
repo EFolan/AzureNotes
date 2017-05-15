@@ -173,6 +173,130 @@ There are limitations on the throughput of that data disk in the A series.
 An S as part of the VM series name that means it includes an SSD
 EG: DS1, DS2 etc
 
+------
+
+Geo replication options
+
+When creating storage accounts there is a replication option
+
+Lowest level of replication is Locally redundant storage.
+
+3 copies of your files stored locally within the one data centre, spread across multiple locations. 
+If one hard disk fails then yours can be rebuilt and restored from copies.
+
+Zone redundant storage stores files within the Geo but in different physical locations.
+
+The Geo could be USA or China etc
+
+Geo redundant storage:
+Stores six copies of your files around the world.
+
+REad access Geo redundant storage:
+Sets up Read accessible copies around the world.
+
+-----
+
+Premium or standard storage
+
+Differences are a req of the exam
+
+Premium storage is stored on SSDs: No magnetic disks or heads with very low latency.
+
+More expensive than standard storage and only certain types of VM support premium (THe ones with S in the type name)
+
+Premium ONLY supports Locally Redundant Storage
+
+In a HDD environment there is a max of 500 operations per second.
+
+In Premium limits are the expected value rather than peaks.
+
+It's good to really go over these differences for the exam.
+
+
+---------------------------------
+
+
+Monitor Azure Virtual machines
+
+It's possible to create alerts for when the % CPU usage breaches a certain threshold.
+
+It can notify us via email or webhook.
+
+Diagnostics:
+
+Allows different types of diagnostics for .net, SQL, ASP etc etc etc.
+
+Can choose one or several different kinds of diagnostics which will be created in a chosen storage account. 
+
+All this can be found in the Monitoring section under VMs.
+
+Good practice to read more up on this as we go along.
+
+--------------------------------
+
+Overview of availability sets
+
+Objective 1.7: MAnaging ARM availability.
+
+Can be managed through availability sets.
+
+Inside Availability set there are a number of VMs.
+
+The AS is configured to have x amount of fault domains and x amount of update domains.
+
+Fault domains:
+The separate hardware locations your VMs are running on. An AS with two Fault domains will be able to split it's VMs between two separate pieces of hardware, meaning if one fails the other will still be up and running.
+
+Update domains:
+Microsoft will never push updates to all update domains at a time. They will go one after the other meaning that if VMs are spread over Update domains they won't all be incapacitated by updates simultaneously.
+
+Domains are zero indexed in the list in Azure portal.
+
+MS has a service agreement of 99.95% uptime if you have two or more VMs running in an availability set.
+
+----------------------------------------
+End of Objective 1
+----------------------------------------
+----------------------------------------
+
+Objective 2: Design and implement a storage and data strategy... 25 - 30% of final score.
+----------------------------------------
+
+Create a storage account
+
+Generally you'll use standard (General storage) storage and use Blob storage when you need storage specifically calibrated for blobs.
+
+There's an option for performance: Standard and Premium. We've covered this already. Standard is on HDDs and Premium is on SSDs.
+
+There'll be an option to set the desired replication level. Again, we've covered this before. Typically we'll pick LRS; locally redundant storage. The other options are covered in detail further up.
+
+Let's go over them anyway.
+
+LRS:  Stores three copies of your data in separate physical locations but in the same data centre.
+
+Zone redundant Storage:
+Stores three separate copies of your data across different location 'zones' but within the same Geo location. So Data may be spread across the US or China.
+
+Geo redundant Storage:
+Six copies of the data are stored across the globe.
+
+Read Accessible Geo redundant storage:
+Same as above except you have read access to your file copies.
+
+
+Encryption is also available.
+
+If we need the data encrypted on the disk it is possible here.
+
+Resource group and location are created as usual.
+
+
+
+
+
+
+
+
 
 
 
