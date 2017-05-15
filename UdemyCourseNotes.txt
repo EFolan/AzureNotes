@@ -1,0 +1,179 @@
+User defined routes - IP forwarding
+
+Scenario: Desire forcing net traffic to travel a particular route from azure to your system before having access to the internet.
+
+Azure portal > New > Everything > Route Table
+
+Created route table default has no routes.
+
+Go into routes. Add route.
+
+Route name: name; Address prefix: 0.0.0.0/0 = all traffic
+
+Next Hop type: Virtual network gateway functions as a site to site vpn, forcing all traffic to go via that route.
+
+Route table now contains one route but isn't associated with a subnet.
+
+Go to subnets and search/add the relevant subnet to apply the route table rules.
+
+---
+
+Firewalls are provided in the Azure marketplace.
+
+Being set up is the same as a Route table in that you'd need to force all subnet traffic through the firewall in order for it to be effective.
+
+--------------
+
+Availability sets
+
+Multiple VMs can be placed in an availability set (as long as they are similar or serve similar purposes.)
+
+MS will allocate these VMs across their own servers/networks in order to help guarantee a high percentage of availability. 
+
+A new availablity set can be created while standing up new VMs
+
+VMs created: 
+
+Avail-Set-1
+User: EFolan
+Pass: Chr0ma
+
+Avail-Set-2
+Same User and Pass
+
+----------------
+
+Use External and Internal load balancing
+
+Fault domains:
+The hardware upon which the VMs run. Different fault domains ensure that not all your VMs share the same hardware.
+
+Update domains:
+Updates will never hit all your VMs at once. MS will update one update domain at a time.
+
+
+Load balancers:
+
+Search load balancers > MS has one > Create.
+
+Public: Traffic that comes in from the internet. Load balancer will distribute this traffic between VMs
+
+Internal: Same but Between internal infrastructure
+
+Probes check if sites are still up
+
+Backend Pools > Create
+
+Machines in Availability set can be added to pool
+
+Back end pool now has all x VMs from the availability set.
+
+
+Health probes:
+
+Load balancer needs a way to see if VMs are alive. So we use the health probe.
+
+Can be customised to web ports etc.
+
+Will check web page every x seconds and after 2 failed checks determines that this VM has failed.
+
+
+Load balancing rules: What are we going to do when traffic comes in.
+
+Can specify port mapping shich forces traffic off of port 80 (for example) to port 8000 on the backend machines.
+
+Session persistence: (AKA sticky sessions) None: any user can go to any VM at any time.
+
+
+-------
+
+Use Application gateway
+
+Relatively new alternative to load balancer.
+
+Only does web based load balancing : http or https
+
+Has a firewall option.
+
+Cookie based session affinity
+
+Secure Sockets Layer SSL installed on the application gateway rather than on the web server giving the server the chance to just do its web server work and not worry about SSL.
+
+              Internet
+                  |
+                  V
+Azure Traffic manager(DNS load blncr)
+_________________|______________
+|                              |
+V                              V
+Azure                        Azure   
+Load                          Load
+balancer                    balancer
+   _|_                         |
+   VVV                         V
+3x Application Gateway      1 App GW
+    XXX                       |||
+  VVVVVVV                     VVV
+VM|VM|VM                    VM|VM|VM
+
+
+------------------------------------
+
+Scaling VM sizes
+
+Desire: Scale VM up from A0 to A1 etc.
+
+Virtual machine > Settings > Size > Size choice.
+
+Can take some time to migrate VM.
+
+---------------------------------
+
+Virtual machine scale sets
+            
+Search VM Scale set
+
+Allows me to allocate several VMs under a single name.
+
+Must be created in a new resource.
+
+REquires a public IP Address
+Allows us to assign a domain name upon creation.
+
+Choose OS image same as usual.
+
+Allowed to choose between 1 and 200 instances
+
+Choose machine size...
+
+Autoscale:
+
+When enabled  we can choose a minimum and maximum number of VMs. Can also set a CPU threshold in % for the set to start scaling up the amount of VMs
+
+Also allows Scale down threshold to be set in %
+
+Also: Legal disclaimer saying that VM scale sets can and will deploy multiple azure resources as needed.
+
+This allows all the work of creating multiple VMs to be done rather quickly.
+
+-------------------------------
+
+ARM VM Storage
+
+After creating a VM with a size that allows two disks it is possible to spin up and associate another disk. under Settings > Disks
+
+Plan for storage capacity:
+
+The A series allows local physical HDD of 20GB only.
+
+They allow an additional data disk (Blob storage) to be spun up alongside.
+
+There are limitations on the throughput of that data disk in the A series.
+
+An S as part of the VM series name that means it includes an SSD
+EG: DS1, DS2 etc
+
+
+
+
+
