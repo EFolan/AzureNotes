@@ -290,6 +290,107 @@ If we need the data encrypted on the disk it is possible here.
 
 Resource group and location are created as usual.
 
+----------------------
+
+Put a cdn in front of a storage account
+
+CDN: Content Delivery network
+
+Demonstrate adding a CDN to a storage account.
+
+Create a public container with Blob access type which can be public.
+
+Upload a file.
+
+Search CDN: MS provide a CDN for various large file types that can be placed in various geographical locations around the world.
+
+Create and place in the appropriate resource group.
+
+Pricing tiers are varied and provided by various sources such as Verizon, Akamai etc.
+
+After creation:
+
+We have 0 endpoints so we're going to want to set one up.
+
+An endpoint is the new url for your content.
+
+Choose a unique name for the endpoint. 
+
+Origin type: Storage
+
+Origin path the path that directs to the CDN:
+
+/publicfiles in the video.
+This is the path to our public container
+
+Leave origin host header.
+
+It'll create an endpoint.
+
+CDN gets pointed to container so container name not required.
+
+----------
+
+Add directories and subdirectories to Blob containers
+
+Can be coded to create a directory structure as needed.
+
+------------------
+
+Use Custom domain names with storage accounts
+
+Can we customise the domain name of a blob/container without a CDN? Yes.
+
+Custom domain property of the Storage account.
+
+Create a CNAME record with a DNS provider that points from your domain to the blob.core.windows.net address.
+
+THis method is simple but requires brief downtime while Azure verifies the domain registration.
+
+Alternately:
+
+Create a CNAME record with your DNS provider that [pints from the asverify subdomain EG asverify.mydomain.com to the asverify subdom of the container url. After this completes you can create a CNAME tat points to the container url standard. 
+
+This method won't incur any down time.
+
+When using this method check the "use indirect CNAME validation" checkbox.
+
+-----------------
+
+Scale a blob container
+
+There are limits of storage accounts in Azure
+
+Max TB in a single storage account: 500 terabytes
+
+One container/blob, table or queue can contain the 500TB. They have a max size of 500TB.
+
+Max size of block blob is approx 195GB. Actual: 50,000 X 4MB
+
+Max size of a page blob is 1TB
+
+Also a limit on operations per second.
+MS measures these in 8KB chunks called  8KB IOPS. 
+The limit is 1000 8KB IOPS per share.
+
+Sharding: With a storage account and a container, if you need to create 500 1TB files the only option is to create another storage account.
+
+This will double your limits.
+
+A problem to consider is how to divide the data between multiple storage accounts. Options exist such as indexing based on file alphabetical order or round robin etc.
+
+--------------------------------------
+
+Objective 2.2: Implement table and queue storage.
+
+Table storage is a noSQL table structure.
+
+You can create your own data structures and it is extremely fast.
+
+Good option for fast flexible data.
+
+
+
 
 
 

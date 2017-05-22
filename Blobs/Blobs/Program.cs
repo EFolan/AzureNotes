@@ -13,23 +13,90 @@ namespace Blobs
     {
         static void Main(string[] args)
         {
-            string storageconnection = System.Configuration.ConfigurationManager.AppSettings.Get("StorageConnectionString");
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageconnection);
+            //create a connection to the storage account using the connection string in Appsettings
+            string connectionstring = System.Configuration.ConfigurationManager.AppSettings.Get("StorageConnectionString");
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionstring);
 
-            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+            //Use said storage account to create a Blob Client
 
-            CloudBlobContainer container = blobClient.GetContainerReference("objective2");
+            CloudBlobClient BlobClient = storageAccount.CreateCloudBlobClient();
 
+            //Create a container
+            CloudBlobContainer container = BlobClient.GetContainerReference("objective2");
             container.CreateIfNotExists();
 
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference("examobjectives");
+            //Create a Blob
 
-            using (var fileStream = System.IO.File.OpenRead(@"C:\Users\Enda\Desktop\mofo.txt.txt"))
-            {
-                blockBlob.UploadFromStream(fileStream);
-            }
-            Console.WriteLine("Press any key to exit");
+            CloudBlockBlob blob = container.GetBlockBlobReference("examobjectives");
+
+            //use Blob to upload from a file stream
+
+            UploadBlob(blob);
+
+            ListAttributes(container);
+
+            SetMetadata(container);
+            ListMetadata(container);
+            CopyBlob(container);
+            UploadBlobSubdirectory(container);
+
+            Console.WriteLine("All done, press any key to continue");
             Console.ReadKey();
+
+        }
+
+        static void UploadBlob(CloudBlockBlob blob)
+        {
+            using (var fileStream = System.IO.File.OpenRead(@"D:/AzureNotes/BlobUpload/notes.txt"))
+            {
+                blob.UploadFromStream(fileStream);
+            }
+        }
+
+        static void ListAttributes(CloudBlobContainer container)
+        {
+            container.FetchAttributes();
+            Console.WriteLine("Container name: " + container.StorageUri.PrimaryUri.ToString());
+            Console.WriteLine("Last Modified: " + container.Properties.LastModified.ToString());
+        }
+
+        static void SetMetadata(CloudBlobContainer container)
+        {
+            container.Metadata.Clear();
+            container.Metadata.Add("Author", "Enda Folan");
+            container.Metadata["authoredOn"] = "May 22, 2017";
+            container.SetMetadata();
+        }
+
+        static void ListMetadata(CloudBlobContainer container)
+        {
+            container.FetchAttributes();
+            Console.WriteLine("Metadata: ");
+            foreach(var i in container.Metadata)
+            {
+                Console.WriteLine("Key: " + i.Key + " Value: " + i.Value + "\n\n");
+            }
+        }
+
+        //Copying blobs within Azure Storage
+        static void CopyBlob(CloudBlobContainer container)
+        {
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference("examobjectives");
+            CloudBlockBlob copyBlockBlob = container.GetBlockBlobReference("examobjectives-copy");
+            copyBlockBlob.StartCopyAsync(new Uri(blockBlob.Uri.AbsoluteUri));
+        }
+
+        //Creating directories and subdirectories within containers
+        static void UploadBlobSubdirectory(CloudBlobContainer container)
+        {
+            CloudBlobDirectory directory = container.GetDirectoryReference("parent-directory");
+            CloudBlobDirectory subdirectory = directory.GetDirectoryReference("subdirectory");
+            CloudBlockBlob blockBlob = subdirectory.GetBlockBlobReference("newexamobjectives");
+
+            using (var filestream = System.IO.File.OpenRead(@"D:/AzureNotes/BlobUpload/notes.txt"))
+            {
+                blockBlob.UploadFromStream(filestream);
+            }
         }
     }
 }
