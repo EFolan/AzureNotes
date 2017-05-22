@@ -389,6 +389,74 @@ You can create your own data structures and it is extremely fast.
 
 Good option for fast flexible data.
 
+----
+Insert data into a table
+
+Creating and adding to table storage in the code examples.
+
+Partition Key: a key that defines the kind of entity that is being held in storage. 
+For instance if a CarEntity is stored then the partition key should be "car". Similarly, a TruckEntity would have partition key: "truck".
+
+RowKey: This is the primary key for the item in question. Should be unique in its table.
+
+-----
+Retrieve an Object from a Table
+
+-----
+
+Transactions
+
+In SQL Server you can wrap a set of operations in a transaction and if one of them fails none of them will complete.
+
+Within table storage Transactions are handled with TableBatchOperations.
+
+Executed in a Batch: Either they all work or they all fail.
+
+Some rules, drawbacks:
+
+In order to work, every operation in a batch must be performed on objects with the same Partition key.
+
+Limit of 100 operations that can be in a batch together.
+
+Only one operation per row.
+
+Create a TableBAtchoperation instance.
+Insert all new objects into the batch.
+Execute the batch operation.
+
+------
+
+Create your first Queue...
+Queue creation in code snippet for table storage
+
+Azure Storage naming conventions:
+
+Storage account:
+Length: 3 - 24
+lowercase only
+valid chars: alphanumeric
+
+Blob names:
+length: 1 - 1024
+case-sensitive
+valid chars: any url chars
+
+Container name
+length: 3 - 63
+lowercase only
+valid chars: alphanumeric and dash
+
+Queue name
+length: 3 - 63
+lowercase only
+valid chars: alphanumeric and dash
+
+Table name:
+length: 3-63
+case-insensitive
+valid chars: alphanumeric
+
+
 
 
 
