@@ -456,6 +456,430 @@ length: 3-63
 case-insensitive
 valid chars: alphanumeric
 
+---------
+
+Shared access signatures
+
+Accessing Blobs via URL can result in access issues if users don't have access.
+
+The access keys under the menu are owner access keys. These give full access and should not be handed out.
+
+Shared access signature under Settings.
+
+Allows granting access to any og the types in the storage account.
+
+The shared access signature token functions as a URL query string with the following parameters:
+
+sv: Not sure, 2016-05-31
+
+ss :Allowed services(b: blob,   f: file, q: queue, t: table)
+
+srt: Resource Types(s: service, c: container, o:    object)
+
+sp: Permissions (Read, Write, Delete, List, Add, Create, Update, Process)
+
+se: End time(yyyy-MM-ddTHH:MM:SSZ)
+
+st: Start time (Same format)
+
+spr: allowed protocols(https only or http and https)
+
+sig: signature key
+
+---
+
+Stored Access Policy
+
+Create a shared access policy via code and store the access policy against a policy name which can be changed after the fact. 
+
+If you need to change the policy after creating it, always use a stored access policy. It'll be possible to change it without having to generate a new URL.
+
+---
+
+Regenerate access keys
+
+Easy to regenerate and can be done under access keys in portal.
+
+After regenerating, all keys in code must be changed to reflect regenerated key.
+
+----------
+
+Configure CORS Cross Origin Access
+
+CORS: Cross Origin Resource Sharing
+
+CORS allows a secure way to allow one domain to call APIs in another domain.
+
+If elements like iframes or scripts that will be embedded into an app or project will be hosted on storage then CORS is an ideal way for the app to reference them.
+
+Can add CORS rules by navigating to CORS under storage and adding a rule.
+
+Can also be done programmatically via the ServiceProperties of the Blob Client and using CorsRules.Add()
+
+---
+
+View Diagnostics for Storage
+
+Activity logs in the storage account allow queries to generate reports about which resources are being accessed, how many etc etc.
+
+There's also dianostics under Monitoring. 
+
+Diagnostics can be turned off or on and are displayed on the general page for a storage account.
+
+Retention can be altered to store diagnostics for longer or shorter period.
+
+-----------------------------
+Objective 2.4: Implement Azure SQL Databases
+
+Azure SQL Database  is a clud database service. Allows scaling without downtime and built in advisors to help maximise performance.
+
+Pricing:
+
+Elastic database model
+
+A pool of resources: can setup a large number of databases that pull resources from a single pool.
+
+Single database model
+
+Managed at the database level.
+More usual pricing tiers that specify memory, storage, power available.
+
+MS measures DB performance in DTUs
+
+DTU: Database transaction units
+
+A DTU is essentially every measure(memory, comp power, storage etc) given a score of up to five and measured together. 
+
+When creating a SQL database: Collation refers to the character set used. We can leave this as the default.
+
+---
+
+Configure Geo-Replication for SQL Databases
+
+Geo-Replication under settings.
+
+Geo-Replication allows you to create a backup copy of your DB in whichever region you choose. MS takes care of the replication process.
+
+Reasons:
+Emergencies: the region goes down or the db goes down.
+
+Useful for reporting. 
+Long running reports don't have to be run against the primary active DB but can be against the backup DB.
+
+This involves creating another DB so going through the steps of creating a new server. 
+
+Secondary type: Readable.
+
+No Elastic Pool for our demo.
+
+This creates a geo replicated secondary database for the selected region.
+
+Any changes from the first will be auto replicated to the second DB.
+
+---
+
+Set a firewall rule to allow access to SQL
+
+We want to be able to interact with this DB.
+
+bcp command
+
+Bulk copy command
+
+Can be used to import data to a sql server
+
+This can also be done via the visual studio tool.
+
+Before doing this we need to open a hole in the firewall to allow access to the SQL server DB.
+
+TO do this we need our current IP address.
+
+In the portal use Set Server Firewall tab in sql server settings and add our IP address to the allowed list. Granting us access to the server.
+
+--- 
+Creating a connection
+
+Within visual studio, open the server explorer and right click -> add connection. Choose Sql Server connection and fill out the server name from Azure along with the sql connection credentials we added when creating the DB.
+
+This can allow you to connect to a DB on the SQL Server.
+
+---
+
+Restore Data using Point-In-Time Restore
+
+Restore option within DB overview.
+
+Gives the ability to restore a DB to a specific point in time.
+
+You can specify a restore point by a certain time.
+
+It will create a new DB using the snapshot from the specified time.
+
+Basic tier DB only allows 7 days of Point-In-Time restore.
+
+Standard tier(S0, S2 etc) Gives 30 days restore time.
+
+Premium tier allows over a month
+
+No cost for having the backup capability but there is a cost associated with running a restore.
+
+--------------
+
+Objective 2.5: Implement Azure DocumentDB (Now CosmosDB)
+
+CosmosDB actually works using JSON rather than fully unstructured like Blobs, Table storage etc.
+
+CosmosDB also provides more complex querying than table storage
+
+---
+
+Create a collection and DocumentDB Database
+
+Add collection from the top menu
+
+Collection gets a unique id and a pricing tier.
+
+Can create new database and give it a name.
+
+RU request units per second
+
+---
+
+Upload documents to CosmosDB
+
+Documents are JSON Files
+
+Settings > Documen explorer
+Can upload up to 100 JSON docs at a time.
+
+Example document:
+
+{
+  "id": "2",
+  "colourName": "Green",
+  "value": "#0f0"
+}
+
+---
+
+Query CosmosDB
+
+Query explorer from within Azure portal
+
+Starting query is SELECT * FROM c
+
+Can query CosmosDB like SQL
+
+SELECT * FROM c WHERE c.colourName = "Red" 
+is valid
+
+-----------
+
+Objective 2.6: Implement Redis Caching
+
+redis.io is the homepage
+
+Redis is an open source, in-memory data store.
+
+Very popular, available for almost every potential server, language, technology available.
+
+Because it runs in memory it is one of the fastest ways of storing and retrieving data available.
+
+In Azure storage or SQL Databases things are stored in disc storage but redis stores everything in memory.
+
+This gets extremely volatile should a server go down etc. Everything in memory is forfeit.
+
+Redis is for data that you don't mind losing. Perfect for caching.
+
+Web caching server stores some information from DB so it doesn't have to keep going back to the db to retrieve it.
+
+Creating:
+
+New > Redis Cache for MS
+
+Comes in Basic,  Standard and Premium.
+
+Name it and set resource group.
+
+Pricing tiers:
+
+Basic tier: Cheapest, low amount of memory for storage (250MB)
+
+Standard: Higher memory (1GB) with replication and 99.9% Similarly
+
+Premium: Data persistence: Allows storing a backup of your redis cache to a disk in a storage account.
+Also, networking and clusters.
+
+---
+
+Implement Redis Caching
+
+Redis server activated and running:
+
+persistence
+
+Redis Data Persistence tab in Settings
+
+Enable RDB Backup and set a backup frequency (60 minutes here).
+
+It does need a storage account to run backups.
+
+Redis cache is ready to go.
+
+---
+
+Implement Security and Configure networking
+
+By default Redis cache is not running on a network but can be accessed using a key/access permissions.
+
+A premium Redis cache can be created on a virtual network, the cache is then assigned to a specific subnet.
+
+When the cache is added to a virtual network I can put the network security group settings on the virtual network and do all the filtering and routing via the virtual network, ensuring that the cache is inaccessible to the wider internet.
+
+The cache must have its own subnet.
+
+Subnets can talk within a virtual network.
+
+Cannot add a network to a redis cache so make sure and add the network during redis creation.
+
+---
+
+Use Redis Cache in a clustered setting
+
+Cluster: a number of servers that operate as a single unit.
+
+Under a premium tier this is available.
+
+When clustering is enabled azure will distribute the cache over the amount of servers that you specify. In this case: 4 with a total size of 24GB.
+
+This does incur a cost.
+
+As a developer you're just accessing redis without worrying about how it is deployed.
+
+It is possible to just access one of the servers if need be: If one of the servers goes down etc.
+
+---
+
+Activity: Create a Redis Cache
+
+Key point: understand the differnet tiers, what they offer and how choosing a tier may be affected by various restraints in a company/environment.
+
+--------------------
+
+Objective 2.7: Implement Azure Search
+
+Azure offers a search as a service solution where azure will index your data and a developer can query the search engine to provide results to the users.
+
+Standard creation with name, resource group and pricing tier.
+
+free tier is limited to 50MB with shared resources and 3 indexes.
+
+Basic tier offers 5 indexes with 2 GB of storage, dedicated resources and scaling of up to 3 search units.
+
+Standard adds the concept of partitions:
+One part of your data can be indexed by one server and another by a different server. Splits up the workload.
+
+Each Partition can have replicas so there can be up to 2 replicas for each partition, further splitting the workload.
+
+Any combinitation of partitions and replicas multiplyed together must not exceed the number of search units available at the tier.
+
+Choose Free tier for now.
+
+---
+
+Create a Search Index
+
+Search service is created but we don't have any indexes.
+
+Settings > Add Index
+
+Add fields to correspond with a primary key.
+
+id : primary key
+name
+description
+thumbnail
+baserate
+baseraterange : cheap|moderate|high : Facetable
+freeparking: boolean
+
+
+Various properties are available for each field:
+
+Retrievable:
+Whether this field can be retrieved and displayed in a search result
+
+Filterable:
+Allows filter to be used in queries EG WHERE name = ...
+
+Sortable: Whether results can be sorted by the field
+
+Facetable:
+Facets are a different type of navigation in a search. Facets can be seen as categories of results. If all results are either 1 or 2 then this has two facets.
+
+Searchable:
+THe field is used to match the search results.
+
+---
+
+Import data for indexing
+
+Indexes can be created via a data source.
+
+Click import data and we're given a set of data stores from which to choose.
+
+We can also use some test sets of data which we do in the lesson.
+
+The next step is to create an indexer.
+
+An indexer is a job that'll either run one time or on a schedule. It will take the data from the data source and refresh the search and indexes based on any changes.
+
+Inside the index the search explorer allows querying of the data.
+
+----------------------
+----------------------
+
+Objective 3: Manage Identity, application and network services
+
+In this case, less about true networking and the associated security aspects but about authentication, messaging and networking within the realms of application development.
+
+----------------
+
+Objective 3.1 Integrate an app with Azure Active Directory (AAD)
+
+AD is one of the most common identity management solutions for companies around the world.
+
+Azure Active Directory is a separate product to AD and extends the services of the latter into the cloud.
+
+AAD is not a replacement for on premises AD. It is a smaller subset of the features of AD. Intended to provide ID and authentication services to mobile and web based applications on the public network that is connected to the on premises AD allowing single sign on between premises and internet hosted applications.
+
+Identity as a service IDaaS
+
+Microsoft now has a preview mode of the Azure Active Directory new portal.
+
+AAD is easy to create in the portal.
+
+---
+
+Implement WS-Federation with AAD
+
+Federation is the concept that AAD does not contain the user's password. Federation works as follows:
+
+You pass the user id and you pass a token. A third party does the authentication with the password and passes a token which is passed to AD. AD verifies the token and allows access.
+
+Federation is supported for AAD.
+
+For the exam we'll need to know WS-Federation, SAML and OAUTH types of Federation.
+
+Instead of developing code from scratch MS provide various samples for the different Federation types.
+
+Link for WS-Federation:
+https://github.com/Azure-Samples/active-directory-dotnet-webapp-wsfederation
+
+
+
+
+
 
 
 
